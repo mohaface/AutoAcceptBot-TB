@@ -68,7 +68,7 @@ async def op(_, m: Message):
             keyboard = InlineKeyboardMarkup(
                 [
                     [
-                        InlineKeyboardButton("🗯 Channel", url="https://t.me/@TandavBots"),
+                        InlineKeyboardButton("🗯 Channel", url="https://t.me/TandavBots"),
                         InlineKeyboardButton("💬 Support", url="https://t.me/TandavBots_Support")
                     ]
                 ]
