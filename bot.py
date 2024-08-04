@@ -27,8 +27,7 @@ gif = [
     'https://te.legra.ph/file/702ca8761c3fd9c1b91e8.mp4'
 ]
 
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Main process ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
+# Main process
 @app.on_chat_join_request(filters.group | filters.channel & ~filters.private)
 async def approve(_, m: Message):
     op = m.chat
@@ -54,16 +53,20 @@ async def approve(_, m: Message):
             await app.send_video(kk.id, img, f"**Hello {kk.mention}!\nWelcome To {m.chat.title}\n\n__Powered By : @TandavBots __**")
             add_user(kk.id)
     except errors.PeerIdInvalid as e:
-        print("User isn't part of the bot's group.")
+        print(f"PeerIdInvalid Error: {e}")
+    except KeyError as ke:
+        print(f"KeyError: {ke}")
+    except ValueError as ve:
+        print(f"ValueError: {ve}")
     except Exception as err:
-        print(str(err))    
+        print(f"General Error: {err}")
 
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Start ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
+# Start
 @app.on_message(filters.command("start"))
 async def op(_, m: Message):
     try:
-        await app.get_chat_member(cfg.CHID, m.from_user.id) 
+        print(f"Configured chat ID: {cfg.CHID}")  # Print the chat ID for debugging
+        await app.get_chat_member(cfg.CHID, m.from_user.id)
         if m.chat.type == enums.ChatType.PRIVATE:
             keyboard = InlineKeyboardMarkup(
                 [
@@ -75,7 +78,7 @@ async def op(_, m: Message):
             )
             add_user(m.from_user.id)
             await m.reply_photo("https://graph.org/file/d57d6f83abb6b8d0efb02.jpg", caption=f"**🦊 Hello {m.from_user.mention}!\nI'm an auto-approve [Admin Join Requests]({m.chat.title}) Bot.\nI can approve users in Groups/Channels. Add me to your chat and promote me to admin with add members permission.\n\n__Powered By : @TandavBots __**", reply_markup=keyboard)
-    
+
         elif m.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
             keyboar = InlineKeyboardMarkup(
                 [
@@ -97,9 +100,16 @@ async def op(_, m: Message):
             ]
         )
         await m.reply_text(f"**⚠️ Access Denied! ⚠️\n\nPlease join @cfg.FSUB to use me. If you joined, click the check again button to confirm.**", reply_markup=key)
+    except errors.PeerIdInvalid as e:
+        print(f"PeerIdInvalid Error: {e}")
+    except KeyError as ke:
+        print(f"KeyError: {ke}")
+    except ValueError as ve:
+        print(f"ValueError: {ve}")
+    except Exception as err:
+        print(f"General Error: {err}")
 
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Callback ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
+# Callback
 @app.on_callback_query(filters.regex("chk"))
 async def chk(_, cb: CallbackQuery):
     try:
@@ -119,8 +129,7 @@ async def chk(_, cb: CallbackQuery):
     except UserNotParticipant:
         await cb.answer("🙅‍♂️ You are not joined to the channel. Join and try again. 🙅‍♂️")
 
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Info ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
+# Info
 @app.on_message(filters.command("users") & filters.user(cfg.SUDO))
 async def dbtool(_, m: Message):
     xx = all_users()
@@ -132,8 +141,7 @@ async def dbtool(_, m: Message):
 👥 Groups : `{x}`
 🚧 Total users & groups : `{tot}` """)
 
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Broadcast ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
+# Broadcast
 @app.on_message(filters.command("bcast") & filters.user(cfg.SUDO))
 async def bcast(_, m: Message):
     allusers = users
@@ -163,8 +171,7 @@ async def bcast(_, m: Message):
 
     await lel.edit(f"✅ Successfully sent to `{success}` users.\n❌ Failed to `{failed}` users.\n👾 Found `{blocked}` blocked users.\n👻 Found `{deactivated}` deactivated users.")
 
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Broadcast Forward ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
+# Broadcast Forward
 @app.on_message(filters.command("fcast") & filters.user(cfg.SUDO))
 async def fcast(_, m: Message):
     allusers = users
